@@ -6,11 +6,12 @@ const rl = readline.createInterface({
 });
 
 function generateNumber() {
-    const digits = '123456789';
+    const digits = '0123456789';
     let number = '';
-    for (let i = 0; i < 3; i++) {
+    while (number.length < 3) {
         const randomIndex = Math.floor(Math.random() * digits.length);
-        number += digits[randomIndex];
+        if(number.search(digits[randomIndex]) == -1)
+            number += digits[randomIndex];
     }
     return number;
 }
@@ -31,40 +32,34 @@ function compareNumbers(answer, guess) {
 }
 
 const answer = generateNumber();
-console.log("숫자 야구 게임 시작!");
+console.log("컴퓨터가 숫자를 생성하였습니다. 답을 맞춰보세요!");
 
-let attempts = 0;
+let attempts = 1;
 
-function playGame() {
-    attempts++; // 횟수 추가
-    rl.question("3자리 숫자를 입력하세요: ", (guess) => {
+function recursion() {
+    rl.question(`${attempts}번째 시도 : `, (guess) => {
         if (guess.length !== 3) {
             console.log("3자리 숫자를 입력하세요");
-            playGame();
+            recursion();
             return;
         }
 
         const { strike, ball } = compareNumbers(answer, guess);
 
+        let str = (strike > 0 ? `${strike}S` : "") + (ball > 0 ? `${ball}B` : "") + (strike == 0 && ball == 0 ? "0S0B" : "");
+        console.log(str);
         if (strike === 3) {
-            console.log(`정답입니다! 축하합니다! 당신은 ${attempts}번 만에 정답을 맞혔습니다.`);
+            console.log(`${attempts}번만에 맞히셨습니다.`);
             rl.close();
             return;
         }
 
-        console.log(`스트라이크: ${strike}, 볼: ${ball}`);
-        playGame();
+        attempts++; // 횟수 추가
+        recursion();
     });
 }
 
-playGame();
-
-
-
-
-
-
-
+recursion();
 
 
 
